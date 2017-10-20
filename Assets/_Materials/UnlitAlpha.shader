@@ -1,4 +1,4 @@
-Shader "Custom/UnlitAlpha"
+Shader "ProtoTools/UnlitAlpha"
 {
     Properties
     {
