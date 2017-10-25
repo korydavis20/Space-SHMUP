@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Main : MonoBehaviour {
 	static public Main S; //singleton for main
@@ -42,5 +43,15 @@ public class Main : MonoBehaviour {
 
 		//invoke SpawnEnemy() again
 		Invoke("SpawnEnemy", 1f/enemySpawnPerSecond);
+	}
+
+	public void DelayedRestart(float delay){
+		//invoke the restart() method in delay seconds
+		Invoke("Restart", delay);
+	}
+
+	public void Restart(){
+		//reload _Scene_0 to restart the game 
+		SceneManager.LoadScene("_Scene_0");
 	}
 }
