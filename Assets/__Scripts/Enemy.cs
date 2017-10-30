@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour {
 	public float health = 10;
 	public int score = 100; // points earned for destroying this
 
-	private BoundsCheck bndCheck;
+	protected BoundsCheck bndCheck;
 
 	//this is a property: a method that acts like a field
 	public Vector3 pos{
