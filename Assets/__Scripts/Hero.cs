@@ -13,6 +13,7 @@ public class Hero : MonoBehaviour {
 	public float gameRestartDelay = 2f;
 	public GameObject projectilePrefab;
 	public float projectileSpeed = 40;
+	public Weapon[] weapons;
 
 	[Header ("Set Dynamically")]
 	private GameObject lastTriggerGo = null;
@@ -31,7 +32,7 @@ public class Hero : MonoBehaviour {
 		} else {
 			Debug.LogError("Hero.Awake() - Attempted to assign a second Hero.S!");
 		}
-		fireDelegate += TempFire;
+		//fireDelegate += TempFire;
 	}
 
 	void Update(){
@@ -62,7 +63,7 @@ public class Hero : MonoBehaviour {
 		}
 	}
 
-	void TempFire(){
+	/*void TempFire(){
 		GameObject projGO = Instantiate<GameObject> (projectilePrefab);
 		projGO.transform.position = transform.position;
 		Rigidbody rigidB = projGO.GetComponent<Rigidbody> ();
@@ -72,7 +73,7 @@ public class Hero : MonoBehaviour {
 		proj.type = WeaponType.blaster;
 		float tSpeed = Main.GetWeaponDefinition( proj.type ).velocity;
 		rigidB.velocity = Vector3.up * tSpeed;
-	}
+	}*/
 
 
 	void OnTriggerEnter(Collider other){
@@ -89,9 +90,36 @@ public class Hero : MonoBehaviour {
 		if (go.tag == "Enemy") { //if the shield was triggered by an enemy
 			shieldLevel--; //decrease the shieldlevel by 1
 			Destroy (go);
-		} else {
-			print ("Triggered: " + go.name);
+		}else if(go.tag == "PowerUp"){
+			//if the shield was triggered by a PowerUp
+			AbsorbPowerUp(go);
+		}else {
+			print ("Triggered by non-Enemy: " + go.name);
 		}
+	}
+
+	public void AbsorbPowerUp(GameObject go){
+		PowerUp pu = go.GetComponent<PowerUp> ();
+		switch (pu.type) {
+			
+			case WeaponType.shield:
+				shieldLevel++;
+				break;
+
+		default:
+			if (pu.type == weapons [0].type) { // if it is the same type
+				Weapon w = GetEmptyWeaponSlot ();
+				if (w != null) {
+					//set it to pu.type
+					w.SetType (pu.type);
+				}
+			} else { //if this is a different weapon type
+				ClearWeapons ();
+				weapons [0].SetType (pu.type);
+			}
+			break;
+		}
+		pu.AbsorbedBy (this.gameObject);
 	}
 
 	public float shieldLevel{
@@ -106,6 +134,21 @@ public class Hero : MonoBehaviour {
 				//tell Main.S to restart the game after a delay
 				Main.S.DelayedRestart(gameRestartDelay);
 			}
+		}
+	}
+
+	Weapon GetEmptyWeaponSlot(){
+		for(int i = 0; i < weapons.Length; i++){
+			if (weapons [i].type == WeaponType.none) {
+				return (weapons [i]);
+			}
+		}
+		return (null);
+	}
+
+	void ClearWeapons(){
+		foreach (Weapon w in weapons) {
+			w.SetType (WeaponType.none);
 		}
 	}
 
