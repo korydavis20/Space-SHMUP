@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour {
 	public float health = 10;
 	public int score = 100; // points earned for destroying this
 	public float showDamageDuration = 0.1f; //# seconds to show damage
-
+	public float powerUpDropChance = 1f; //chance to drop a powerup
 
 	[Header ("Set Dynamically: Enemy")]
 	public Color[] originalColors;
@@ -62,9 +62,11 @@ public class Enemy : MonoBehaviour {
 
 	void OnCollisionEnter(Collision coll){
 		GameObject otherGO = coll.gameObject;
+
 		switch (otherGO.tag){
 		case "ProjectileHero":
 			Projectile p = otherGO.GetComponent<Projectile> ();
+
 			//if this enemy is off screen, don't damage it
 			if (!bndCheck.isOnScreen) {
 				Destroy (otherGO);
@@ -75,10 +77,20 @@ public class Enemy : MonoBehaviour {
 			ShowDamage();
 			//get the damage amount from the Main WEAP_DICT
 			health -= Main.GetWeaponDefinition (p.type).damageOnHit;
+
 			if (health <= 0) {
-				//destroy this enemy
-				Destroy (this.gameObject);
+				
+				// Tell the Main singleton that this ship was destroyed // b
+				if (!notifiedOfDestruction){
+					Main.S.shipDestroyed( this );
+				}
+
+				notifiedOfDestruction = true;
+				// Destroy this Enemy
+				Destroy(this.gameObject);
+
 			}
+
 			Destroy (otherGO);
 			break;
 

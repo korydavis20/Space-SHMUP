@@ -26,13 +26,15 @@ public class Hero : MonoBehaviour {
 	[SerializeField]
 	private float _shieldLevel = 1;
 
-	void Awake(){
+	void Start(){
 		if (S == null) {
 			S = this; //set singleton
 		} else {
 			Debug.LogError("Hero.Awake() - Attempted to assign a second Hero.S!");
 		}
-		//fireDelegate += TempFire;
+		//reset the weapons to start _Hero with 1 blaster
+		ClearWeapons();
+		weapons [0].SetType (WeaponType.blaster);
 	}
 
 	void Update(){
@@ -107,15 +109,15 @@ public class Hero : MonoBehaviour {
 				break;
 
 		default:
-			if (pu.type == weapons [0].type) { // if it is the same type
+			if (pu.type == weapons[0].type) { // if it is the same type
 				Weapon w = GetEmptyWeaponSlot ();
 				if (w != null) {
 					//set it to pu.type
-					w.SetType (pu.type);
+					w.SetType(pu.type);
 				}
 			} else { //if this is a different weapon type
-				ClearWeapons ();
-				weapons [0].SetType (pu.type);
+				ClearWeapons();
+				weapons[0].SetType (pu.type);
 			}
 			break;
 		}
@@ -139,8 +141,8 @@ public class Hero : MonoBehaviour {
 
 	Weapon GetEmptyWeaponSlot(){
 		for(int i = 0; i < weapons.Length; i++){
-			if (weapons [i].type == WeaponType.none) {
-				return (weapons [i]);
+			if (weapons[i].type == WeaponType.none) {
+				return (weapons[i]);
 			}
 		}
 		return (null);
