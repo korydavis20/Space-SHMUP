@@ -86,8 +86,10 @@ public class Enemy : MonoBehaviour {
 				}
 
 				notifiedOfDestruction = true;
+
 				// Destroy this Enemy
 				Destroy(this.gameObject);
+				Main.S.UpdateGUI ();
 
 			}
 
@@ -115,4 +117,5 @@ public class Enemy : MonoBehaviour {
 		}
 		showingDamage = false;
 	}
+		
 }

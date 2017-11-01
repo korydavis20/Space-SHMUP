@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Main : MonoBehaviour {
 	static public Main S; //singleton for main
@@ -13,11 +14,17 @@ public class Main : MonoBehaviour {
 	public float enemyDefaultPadding = 1.5f; // Padding for position
 	public WeaponDefinition[] weaponDefinitions;
 	public GameObject prefabPowerUp;
+	public Text uitLevel; // The GT_Level GUIText
+	public Text uitScore; // The GT_Score GUIText
 	public WeaponType[] powerUpFrequency = new WeaponType[] { 
 		WeaponType.blaster, WeaponType.blaster, WeaponType.spread, WeaponType.shield 
 	};
 
 	private BoundsCheck bndCheck;
+
+	[Header("Set Dynamically")]
+	public int level;
+	public int Totalscore;
 
 	public void shipDestroyed(Enemy e){
 		
@@ -83,6 +90,9 @@ public class Main : MonoBehaviour {
 	public void Restart(){
 		//reload _Scene_0 to restart the game 
 		SceneManager.LoadScene ("_Scene_0");
+		Totalscore = 0;
+		level = 1;
+
 	}
 	/// <summary>
 	/// Static function that gets a WeaponDefinition from the WEAP_DICT static
@@ -93,16 +103,22 @@ public class Main : MonoBehaviour {
 	/// WeaponType of none..</returns>
 	/// <param name="wt">The WeaponType of the desired WeaponDefinition</param>
 	static public WeaponDefinition GetWeaponDefinition( WeaponType wt )
-	{ // a
+	{ 
 		// Check to make sure that the key exists in the Dictionary
 		// Attempting to retrieve a key that didn't exist, would throw an error,
 		// so the following if statement is important.
 		if (WEAP_DICT.ContainsKey(wt))
-		{ // b
+		{ 
 			return( WEAP_DICT[wt] );
 		}
 		// This returns a new WeaponDefinition with a type of WeaponType.none,
 		// which means it has failed to find the right WeaponDefinition
 		return( new WeaponDefinition() ); // c
+	}
+
+	public void UpdateGUI(){
+		Totalscore += 100;
+		uitLevel.text = "Level: " + level + " of 4";
+		uitScore.text = "Score: " + Totalscore;
 	}
 }
